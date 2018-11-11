@@ -21,6 +21,11 @@ only {{.}} left
 	<input type="submit" value="reserve ticket for 5 minutes">
 </form>
 
+<a href="/nts/v1/list-guests">guests list</a>
+<form action="/nts/v1/debug/reset" method="post">
+	<input type="submit" value="reset the world">
+</form>
+
 </body>
 </html>
 `

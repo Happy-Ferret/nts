@@ -19,10 +19,7 @@ var chargehtml = `
 congratulations {{.}} your payment is complete<br>
 enjoy the show!<br>
 
-<a href="/nts/v1/list-guests">guests list</a>
-<form action="/nts/v1/debug/reset" method="POST">
-	<input type="submit" value="reset the world">
-</form>
+<a href="/">main page</a>
 
 </body>
 </html>
