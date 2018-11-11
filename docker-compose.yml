@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    nts:
+        image: nts:1.0
+        build: .
+        environment:
+            - NTS_STRIPE_PUBLISHABLE_KEY
+            - NTS_STRIPE_SECRET_KEY
+        ports:
+            - "9000:9000"

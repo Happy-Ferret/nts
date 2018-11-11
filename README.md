@@ -12,6 +12,10 @@ Also meant primarily as a backend implementation, so frontend part is just pure 
 
 Commands below will start a server instance at http://localhost:9000, you can go there with your browser to try it out.
 
+### stripe
+
+To be able to perform actual charge, Stripe keys need to be provided. NTS reads them from `NTS_STRIPE_PUBLISHABLE_KEY` and `NTS_STRIPE_SECRET_KEY` environment variables. Note that the same variables are also picked up by `docker-compose`.
+
 ### using docker-compose
 
 ```bash
