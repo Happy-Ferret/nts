@@ -11,22 +11,24 @@ type customerState struct {
 
 type MemTicketsDB struct {
 	remaining int
-	customers map[string]*customerState
+	// This field is exposed for the sake of testing
+	// In real scenario, this memdb whole will most
+	// probably sit in the testing module and a "real"
+	// DB implementation will sit here instead.
+	Customers map[string]*customerState
 }
 
 func NewMemTicketsDB(number int) *MemTicketsDB {
 	return &MemTicketsDB{
 		remaining: number,
-		customers: map[string]*customerState{},
+		Customers: map[string]*customerState{},
 	}
 }
 
 func (m *MemTicketsDB) Remaining() (int, error) {
-	// Cleanup expired reservations
 	now := time.Now().UTC()
-	for fullname, cs := range m.customers {
+	for _, cs := range m.Customers {
 		if !cs.charged && now.Sub(cs.reserved).Minutes() > 5 {
-			delete(m.customers, fullname)
 			m.remaining++
 		}
 	}
@@ -34,13 +36,13 @@ func (m *MemTicketsDB) Remaining() (int, error) {
 }
 
 func (m *MemTicketsDB) Reserve(fullname string) error {
-	customer, exists := m.customers[fullname]
+	customer, exists := m.Customers[fullname]
 	if !exists {
 		if m.remaining <= 0 {
 			return ErrNoTicketsRemaining
 		}
 		m.remaining-- // TODO: Make this atomic
-		m.customers[fullname] = &customerState{
+		m.Customers[fullname] = &customerState{
 			reserved: time.Now().UTC(),
 			charged:  false,
 		}
@@ -51,7 +53,7 @@ func (m *MemTicketsDB) Reserve(fullname string) error {
 }
 
 func (m *MemTicketsDB) Charge(fullname string) error {
-	customer, exists := m.customers[fullname]
+	customer, exists := m.Customers[fullname]
 	if !exists {
 		return ErrNoReservation
 	}
@@ -64,7 +66,7 @@ func (m *MemTicketsDB) Charge(fullname string) error {
 
 func (m *MemTicketsDB) Guests() ([]string, error) {
 	names := []string{}
-	for fullname, cs := range m.customers {
+	for fullname, cs := range m.Customers {
 		if cs.charged {
 			names = append(names, fullname)
 		}
@@ -73,7 +75,7 @@ func (m *MemTicketsDB) Guests() ([]string, error) {
 }
 
 func (m *MemTicketsDB) Reset() error {
-	m.remaining += len(m.customers)
-	m.customers = map[string]*customerState{}
+	m.remaining += len(m.Customers)
+	m.Customers = map[string]*customerState{}
 	return nil
 }
