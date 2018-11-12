@@ -75,6 +75,12 @@ func (m *MemTicketsDB) Charge(fullname string) error {
 	if !exists {
 		return ErrNoReservation
 	}
+	if time.Now().UTC().Sub(customer.reserved).Minutes() > 5 {
+		m.lock.Lock()
+		m.remaining++
+		m.lock.Unlock()
+		return ErrReservationExpired
+	}
 	if customer.charged.CAS(false, true) {
 		return nil
 	}

@@ -5,6 +5,7 @@ import "errors"
 var ErrNoTicketsRemaining = errors.New("no tickets remaining")
 var ErrNoReservation = errors.New("no reservation for given name")
 var ErrAlreadyCharged = errors.New("reservation already charged")
+var ErrReservationExpired = errors.New("reservation has expired")
 
 // TicketsDB defines database layer operations for ticket management.
 type TicketsDB interface {
