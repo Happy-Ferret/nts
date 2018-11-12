@@ -47,6 +47,11 @@ func reserve(dbC db.TicketsDB, stripePublicKey string) http.HandlerFunc {
 		fullname := req.Form.Get("fullname")
 
 		if err := dbC.Reserve(fullname); err != nil {
+			if err == db.ErrAlreadyCharged {
+				// Stealing someone else's template, but oh well.
+				tmplExec(res, chargetmpl, fullname)
+				return
+			}
 			handleInternalError(res, "storing the reservation", err)
 			return
 		}
